@@ -1,0 +1,49 @@
+pipeline{
+    agent any
+    tools{
+        maven 'Maven'
+    }
+    stages{
+        stage('Checkout Git Repository'){
+            steps{
+                git branch: 'main', url: 'https://github.com/Nilupul925/jenkins_test.git'
+            }
+        }
+        stage('Build Maven Package'){
+            steps{
+                script{
+                    bat 'mvn clean package -DskipTests'
+                }
+            }
+        }
+        stage('Build Docker Composer'){
+            steps{
+                script{
+                    bat 'docker compose build'
+                }
+            }
+        }
+        stage('Login To Dockerhub'){
+            steps{
+                withCredentials([string(credentialsId: 'password', variable: 'loginDockerHub')]) {
+                    bat 'docker login -u theekshana925 -p %loginDockerHub%'
+                }
+            }
+        }
+        stage('Push Dockerhub'){
+            steps{
+                script{
+                    bat 'docker tag demodocker:v1 theekshana925/demodocker:v1'
+                    bat 'docker push theekshana925/demodocker:v1'
+                }
+            }
+        }
+        stage('Logout Dockerhub'){
+            steps{
+                script{
+                    bat 'docker logout'
+                }
+            }
+        }
+    }
+}
