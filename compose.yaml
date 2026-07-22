@@ -1,0 +1,8 @@
+version: '3.8' # Docker Compose version
+services: # Define the custom services that make up your application
+  app: # Define the application service and default name of image
+    build: . # Build the Docker image from the current directory
+    image: demodocker:latest # Name of the image to be built
+    container_name: demo-container # Name of the container
+    ports: 
+      - "8081:8081" # Map port 8081 of the host to port 8081 of the container
